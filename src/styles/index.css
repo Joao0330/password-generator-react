@@ -78,22 +78,42 @@ input[type='range']::-webkit-slider-thumb {
 	letter-spacing: 0;
 }
 
+@utility copyBtn {
+	@apply cursor-pointer;
+
+	@media (min-width: 80rem) {
+		&:hover {
+			svg path {
+				fill: white;
+			}
+		}
+	}
+}
+
 @utility passwordStrengthBars {
-	@apply flex gap-2;
+	@apply flex items-center gap-4;
 
 	span {
-		@apply border-2 border-grey-200 w-2.5 h-7;
+		@apply text-preset3 text-grey-200 uppercase md:text-preset2;
+	}
+
+	div {
+		@apply flex gap-2;
+
+		span {
+			@apply border-2 border-grey-200 w-2.5 h-7;
+		}
 	}
 }
 
 @utility generateBtn {
-	@apply bg-green-200 text-grey-800 border-2 border-green-200 py-4 flex items-center justify-center gap-4 cursor-pointer xl:hover:bg-transparent xl:hover:text-green-200;
+	@apply bg-green-200 text-grey-800 border-2 border-green-200 py-4 flex items-center justify-center gap-4 cursor-pointer md:py-6 xl:hover:bg-transparent xl:hover:text-green-200 transition duration-200;
 
 	span {
 		@apply text-preset4 uppercase;
 	}
 
-	@media (min-width: 1280px) {
+	@media (min-width: 80rem) {
 		&:hover {
 			svg path {
 				fill: hsl(127, 100%, 82%);
