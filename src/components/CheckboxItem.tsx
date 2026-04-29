@@ -1,4 +1,11 @@
-export const CheckboxItem = ({ optionType }: { optionType: 'uppercase' | 'lowercase' | 'numbers' | 'symbols' }) => {
+import type { allowedCharsTypes, OptionsTypes } from '@/types';
+
+interface CheckboxItemProps {
+	optionType: OptionsTypes;
+	setPasswordOptions: React.Dispatch<React.SetStateAction<allowedCharsTypes>>;
+}
+
+export const CheckboxItem = ({ optionType, setPasswordOptions }: CheckboxItemProps) => {
 	const checkboxOptionsMap = {
 		uppercase: 'Include Uppercase Letters',
 		lowercase: 'Include Lowercase Letters',
@@ -6,10 +13,17 @@ export const CheckboxItem = ({ optionType }: { optionType: 'uppercase' | 'lowerc
 		symbols: 'Include Symbols',
 	};
 
+	const handleChange = (option: OptionsTypes) => (e: React.ChangeEvent<HTMLInputElement>) => {
+		setPasswordOptions(prev => ({
+			...prev,
+			[option]: e.target.checked,
+		}));
+	};
+
 	return (
 		<li>
 			<label className='group flex items-center gap-4 cursor-pointer'>
-				<input type='checkbox' className='hidden' />
+				<input type='checkbox' className='hidden' onChange={handleChange(optionType)} id={optionType} />
 
 				<div
 					className='w-5 h-5 border-2 border-white flex items-center justify-center
