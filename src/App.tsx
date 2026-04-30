@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CheckboxItem } from './components/CheckboxItem';
-import type { allowedCharsTypes } from './types';
+import { calculateStrength, getPasswordChars, strengthConfig } from './data';
 
 function App() {
 	const [passwordLength, setPasswordLength] = useState(0);
@@ -12,27 +12,8 @@ function App() {
 	});
 	const [password, setPassword] = useState('');
 
-	const getPasswordChars = (options: allowedCharsTypes) => {
-		let passwordChars = '';
-
-		if (options.uppercase) {
-			passwordChars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		}
-
-		if (options.lowercase) {
-			passwordChars += 'abcdefghijklmnopqrstuvwxyz';
-		}
-
-		if (options.numbers) {
-			passwordChars += '0123456789';
-		}
-
-		if (options.symbols) {
-			passwordChars += '!@#$%^&*()_+[]{}<>?';
-		}
-
-		return passwordChars;
-	};
+	const passwordStrength = calculateStrength(password);
+	const strengthConfigMap = strengthConfig[passwordStrength];
 
 	const generateRandomPassword = () => {
 		const characterPool = getPasswordChars(passwordOptions);
@@ -50,6 +31,8 @@ function App() {
 		setPassword(generated);
 	};
 
+	//!TODO: Add copy to clipboard functionality
+
 	return (
 		<>
 			<main className='min-h-dvh px-4 pt-16.25 pb-15.75 md:flex md:items-center md:justify-center md:pt-33.25 md:pb-48.75'>
@@ -57,7 +40,7 @@ function App() {
 					<h1 className='text-preset4 text-grey-600 text-center md:text-preset2'>Password Generator</h1>
 
 					<div className='p-4 bg-grey-800 flex items-center justify-between overflow-hidden md:py-4 md:px-8'>
-						<span className='text-preset2 text-grey-700 md:text-preset1'>{password === '' ? 'P4$5W0rD!' : password}</span>
+						<span className={`text-preset2 ${!password ? 'text-grey-700' : 'text-white'}   md:text-preset1`}>{!password ? 'P4$5W0rD!' : password}</span>
 
 						<div className='flex items-center gap-2 md:gap-4'>
 							<span className='text-preset4 text-green-200 uppercase  md:text-preset3'>copied</span>
@@ -94,13 +77,12 @@ function App() {
 							<p className='text-preset4 uppercase text-grey-600'>strength</p>
 
 							<div className='passwordStrengthBars'>
-								<span>medium</span>
+								<span>{strengthConfigMap.label}</span>
 
 								<div>
-									<span></span>
-									<span></span>
-									<span></span>
-									<span></span>
+									{[1, 2, 3, 4].map(bar => (
+										<span key={bar} className={`w-2.5 h-7  ${bar <= strengthConfigMap.bars ? strengthConfigMap.color : 'bg-transparent border-2 border-grey-200'}`} />
+									))}
 								</div>
 							</div>
 						</div>

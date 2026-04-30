@@ -99,10 +99,6 @@ input[type='range']::-webkit-slider-thumb {
 
 	div {
 		@apply flex gap-2;
-
-		span {
-			@apply border-2 border-grey-200 w-2.5 h-7;
-		}
 	}
 }
 
