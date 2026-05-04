@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { CheckboxItem } from './components/CheckboxItem';
-import { calculateStrength, getPasswordChars, strengthConfig } from './data';
+import { strengthConfig } from './data';
+import { copyToClipboard } from './utils/copyToClipboard';
+import { calculatePasswordStrength } from './utils/calculatePasswordStrength';
+import { generateRandomPassword } from './utils/generateRandomPassword';
 
 function App() {
-	const [passwordLength, setPasswordLength] = useState(0);
+	const [passwordLength, setPasswordLength] = useState(12);
 	const [passwordOptions, setPasswordOptions] = useState({
 		uppercase: false,
 		lowercase: false,
@@ -13,24 +16,8 @@ function App() {
 	const [password, setPassword] = useState('');
 	const [passwordCopied, setPasswordCopied] = useState(false);
 
-	const passwordStrength = calculateStrength(password);
+	const passwordStrength = calculatePasswordStrength(password);
 	const strengthConfigMap = strengthConfig[passwordStrength];
-
-	const generateRandomPassword = () => {
-		const characterPool = getPasswordChars(passwordOptions);
-
-		if (!characterPool) return;
-		if (passwordLength <= 0) return;
-
-		let generated = '';
-
-		for (let i = 0; i < passwordLength; i++) {
-			const randomIndex = Math.floor(Math.random() * characterPool.length);
-			generated += characterPool[randomIndex];
-		}
-
-		setPassword(generated);
-	};
 
 	return (
 		<>
@@ -38,7 +25,7 @@ function App() {
 				<section className='flex flex-col gap-4 md:w-135'>
 					<h1 className='text-preset4 text-grey-600 text-center md:text-preset2'>Password Generator</h1>
 
-					<div className='p-4 bg-grey-800 flex items-center justify-between gap-2 md:py-4 md:px-8'>
+					<div className='p-4 bg-grey-800 flex items-center justify-between gap-2 xl:mt-4 md:py-4 md:px-8'>
 						<span className={`overflow-hidden text-preset2 ${!password ? 'text-grey-700' : 'text-white'}   md:text-preset1`}>{!password ? 'P4$5W0rD!' : password}</span>
 
 						<div className='flex items-center gap-2 md:gap-4'>
@@ -47,9 +34,7 @@ function App() {
 							<button
 								className='copyBtn'
 								onClick={() => {
-									if (!password) return;
-									navigator.clipboard.writeText(password);
-
+									copyToClipboard(password);
 									setPasswordCopied(true);
 								}}
 							>
@@ -63,7 +48,7 @@ function App() {
 						</div>
 					</div>
 
-					<div className='p-4 bg-grey-800 flex flex-col gap-8 md:py-6 md:px-8'>
+					<div className='p-4 bg-grey-800 flex flex-col gap-8 md:py-6 md:px-8 xl:mt-2'>
 						<div className='flex flex-col gap-2 md:gap-4'>
 							<div className='flex justify-between items-center'>
 								<p className='text-preset4 text-white md:text-preset3'>Character Length</p>
@@ -94,7 +79,18 @@ function App() {
 							</div>
 						</div>
 
-						<button type='button' className='generateBtn' onClick={generateRandomPassword}>
+						<button
+							type='button'
+							className='generateBtn'
+							onClick={() => {
+								setPasswordCopied(false);
+
+								const generated = generateRandomPassword(passwordOptions, passwordLength);
+								if (!generated) return;
+
+								setPassword(generated);
+							}}
+						>
 							<span>generate</span>
 							<svg width='12' height='12' xmlns='http://www.w3.org/2000/svg'>
 								<path fill='#24232C' d='m5.106 12 6-6-6-6-1.265 1.265 3.841 3.84H.001v1.79h7.681l-3.841 3.84z' />
